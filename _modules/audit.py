@@ -22,7 +22,7 @@ def _linux_cdm(cmd:list[str],timeout:int = 3):
             outs, errs = proc.communicate(timeout=timeout)
         except subprocess.SubprocessError as e:
             proc.kill()
-            log.error(f'audit _linux_cdm: {e}')
+            log.debug(f'audit _linux_cdm: {e}')
             return 'None'
     return outs.decode('utf-8').rstrip()
 
@@ -111,7 +111,14 @@ def _linux_memdata(invent:dict):
 
 def _linux_host_disk2stor_map(invent:dict):
     colums = 'NAME,SERIAL,VENDOR,MODEL,SIZE,TYPE,MOUNTPOINT,PKNAME,KNAME'
-    invent["host_disk2stor_map"] = json.loads(_linux_cdm(['lsblk','-J','-b','-o',colums]))['blockdevices']
+    out = _linux_cdm(['lsblk','-J','-b','-o',colums])
+    try:
+        invent["host_disk2stor_map"] = json.loads(out)['blockdevices']
+    except json.JSONDecodeError:
+        log.debug('audit: _linux_host_disk2stor_map JSONDecodeError, input{out}')
+        invent["host_disk2stor_map"] = 'None'
+
+
     
 def _linux_hostnames(invent:dict):
     invent['host_dns_name'] = _linux_cdm(['hostname','-f'])
@@ -120,20 +127,25 @@ def _linux_hostnames(invent:dict):
     
 
 def _linux_netatapter(invent:dict):
-    adaptdata = json.loads(_linux_cdm(['ip','-j','-d','a']))
+    out = _linux_cdm(['ip','-j','-d','a'])
     list_adapt = []
-    for a in adaptdata:
-        adapt = {}
-        adapt['name'] = a['ifname']
-        adapt['mac_address'] = a['address']
-        adapt['ips_info'] = []
-        for addr in a['addr_info']:
-            i = ipaddress.ip_interface(f'{addr["local"]}/{addr["prefixlen"]}')
-            adapt['ips_info'].append({"ip": str(i.ip),
-                                     "netmask": str(i.netmask),
-                                     "network": str(i.network),
-                                     "alias": addr.get('label','')})
-        list_adapt.append(adapt)
+    try:
+        adaptdata = json.loads(out)      
+        for a in adaptdata:
+            adapt = {}
+            adapt['name'] = a['ifname']
+            adapt['mac_address'] = a['address']
+            adapt['ips_info'] = []
+            for addr in a['addr_info']:
+                i = ipaddress.ip_interface(f'{addr["local"]}/{addr["prefixlen"]}')
+                adapt['ips_info'].append({"ip": str(i.ip),
+                                        "netmask": str(i.netmask),
+                                        "network": str(i.network),
+                                        "alias": addr.get('label','')})
+            list_adapt.append(adapt)
+        
+    except json.JSONDecodeError:
+        log.debug('audit: netatapter JSONDecodeError, input{out}')
     invent['host_netadapter_html'] = list_adapt
 
 def _linux_ip_address(invent:dict):
