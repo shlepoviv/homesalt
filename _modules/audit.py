@@ -213,7 +213,7 @@ def check(full=False):
         _linux_add_pkgs_list(invent)
 
     if not full:
-        for key, val in invent:
+        for key, val in invent.items():
             if isinstance(val,list):
                 if len(val) > 1:
                     if isinstance(val[0],dict):
