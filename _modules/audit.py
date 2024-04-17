@@ -211,6 +211,12 @@ def check():
         _linux_add_dns_servers(invent)
         _linux_add_users(invent)
         _linux_add_pkgs_list(invent)
+
+        if invent:
+        __salt__["event.send"](
+            "custom/discovery/inventory/check",
+            {"finished": True, "message": "audit result",'inventory':invent},
+        )
     return invent
 
 if __name__ == '__main__':
