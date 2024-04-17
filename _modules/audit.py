@@ -189,7 +189,7 @@ def _linux_add_pkgs_list(invent:dict):
         })  
 
 
-def check():
+def check(full=False):
     '''
     launching audite
     '''
@@ -212,11 +212,18 @@ def check():
         _linux_add_users(invent)
         _linux_add_pkgs_list(invent)
 
-        if invent:
-            __salt__["event.send"](
-                "custom/discovery/inventory/check",
-                {"finished": True, "message": "audit result",'inventory':invent},
-            )
+    if not full:
+        for key, val in invent:
+            if isinstance(val,list):
+                if len(val) > 1:
+                    if isinstance(val[0],dict):
+                        invent[key] = f'count {len(val)}'
+
+    if invent:
+        __salt__["event.send"](
+            "custom/discovery/inventory/check",
+            {"finished": True, "message": "audit result",'inventory':invent},
+        )
     return invent
 
 if __name__ == '__main__':
