@@ -129,23 +129,18 @@ def _linux_hostnames(invent:dict):
 def _linux_netatapter(invent:dict):
     out = _linux_cdm(['ip','-j','-d','a'])
     list_adapt = []
-    try:
-        adaptdata = json.loads(out)      
-        for a in adaptdata:
-            adapt = {}
-            adapt['name'] = a['ifname']
-            adapt['mac_address'] = a['address']
-            adapt['ips_info'] = []
-            for addr in a['addr_info']:
-                i = ipaddress.ip_interface(f'{addr["local"]}/{addr["prefixlen"]}')
-                adapt['ips_info'].append({"ip": str(i.ip),
-                                        "netmask": str(i.netmask),
-                                        "network": str(i.network),
-                                        "alias": addr.get('label','')})
-            list_adapt.append(adapt)
-        
-    except json.JSONDecodeError:
-        log.debug('audit: netatapter JSONDecodeError, input{out}')
+    for a in adaptdata:
+        adapt = {}
+        adapt['name'] = a['ifname']
+        adapt['mac_address'] = a['address']
+        adapt['ips_info'] = []
+        for addr in a['addr_info']:
+            i = ipaddress.ip_interface(f'{addr["local"]}/{addr["prefixlen"]}')
+            adapt['ips_info'].append({"ip": str(i.ip),
+                                     "netmask": str(i.netmask),
+                                     "network": str(i.network),
+                                     "alias": addr.get('label','')})
+        list_adapt.append(adapt)
     invent['host_netadapter_html'] = list_adapt
 
 def _linux_ip_address(invent:dict):
