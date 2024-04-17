@@ -213,10 +213,10 @@ def check():
         _linux_add_pkgs_list(invent)
 
         if invent:
-        __salt__["event.send"](
-            "custom/discovery/inventory/check",
-            {"finished": True, "message": "audit result",'inventory':invent},
-        )
+            __salt__["event.send"](
+                "custom/discovery/inventory/check",
+                {"finished": True, "message": "audit result",'inventory':invent},
+            )
     return invent
 
 if __name__ == '__main__':
