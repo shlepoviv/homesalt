@@ -174,8 +174,8 @@ def _linux_add_users(invent:dict):
                     "username": u[0],
                     "uid": u[2],
                     "gid": u[3],
-                    "home_dir": u[4],
-                    "shell": u[5]
+                    "home_dir": u[5],
+                    "shell": u[6]
 
                 })
     else: 
