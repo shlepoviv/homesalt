@@ -145,7 +145,9 @@ def _linux_netatapter(invent:dict):
 
 def _linux_ip_address(invent:dict):
     invent['host_ip_address'] = _linux_cdm(['hostname','-i'])
-    invent['host_ip_addresses'] = _linux_cdm(['hostname','-I']).split().append(invent['host_ip_address'])
+    out = _linux_cdm(['hostname','-I']).split()
+    out.append(invent['host_ip_address'])
+    invent['host_ip_addresses'] = out
 
 def _linux_add_dns_servers(invent:dict):
     file_meminfo = '/run/systemd/resolve/resolv.conf'
