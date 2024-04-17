@@ -22,7 +22,7 @@ def _linux_cdm(cmd:list[str],timeout:int = 3):
             outs, errs = proc.communicate(timeout=timeout)
         except subprocess.SubprocessError as e:
             proc.kill()
-            log.debug(f'audit _linux_cdm: {e}')
+            log.error(f'audit _linux_cdm: {e}')
             return 'None'
     return outs.decode('utf-8').rstrip()
 
