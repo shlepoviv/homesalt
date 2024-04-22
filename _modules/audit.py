@@ -10,6 +10,9 @@ import os
 import json
 import ipaddress
 
+import salt.utils.cache as cache
+import salt.utils.hashutils as hashutils
+
 log = logging.getLogger(__name__)
 
 
@@ -202,8 +205,30 @@ def _linux_add_pkgs_list(invent:dict):
             'version':v
         })  
 
+def _write_to_cache(data):
+    cachedir = __salt__["config.get"]("cachedir")
+    context_cache = cache.ContextCache({'cachedir':cachedir}, "inventorycache")
+    context_cache.cache_context(data.copy())
 
-def check(full=False):
+def _read_from_cache():
+    cachedir = __salt__["config.get"]("cachedir")
+    try:
+        context_cache = cache.ContextCache({'cachedir':cachedir}, "inventorycache")
+        return context_cache.get_cache_context()
+    except:
+        return None
+
+def _hash(data):
+    return hashutils.md5_digest(json.dumps(data, sort_keys=True))
+
+def _send_event(invent:dict):
+    __salt__["event.send"](
+            "custom/discovery/inventory/check",
+            {"finished": True, "message": "audit result",'inventory':invent},
+        )
+        
+
+def check(full=False, silent = False):
     '''
     launching audite
     '''
@@ -225,6 +250,18 @@ def check(full=False):
         _linux_add_dns_servers(invent)
         _linux_add_users(invent)
         _linux_add_pkgs_list(invent)
+    
+    old_cache = _read_from_cache() 
+    old_cache_hash = None
+    if old_cache:
+        old_cache_hash = _hash(old_cache)
+    
+    new_cache_hash = _hash(invent)
+
+    if new_cache_hash != old_cache_hash:
+        _write_to_cache(invent)
+    elif silent:
+        return invent
 
     if not full:
         for key, val in invent.items():
@@ -234,10 +271,7 @@ def check(full=False):
                         invent[key] = f'count {len(val)}'
 
     if invent:
-        __salt__["event.send"](
-            "custom/discovery/inventory/check",
-            {"finished": True, "message": "audit result",'inventory':invent},
-        )
+        _send_event(invent)
     return invent
 
 if __name__ == '__main__':
