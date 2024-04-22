@@ -9,9 +9,9 @@ import logging
 import os
 import json
 import ipaddress
+import hashlib
 
 import salt.utils.cache as cache
-import salt.utils.hashutils as hashutils
 
 log = logging.getLogger(__name__)
 
@@ -219,7 +219,15 @@ def _read_from_cache():
         return None
 
 def _hash(data):
-    return hashutils.md5_digest(json.dumps(data, sort_keys=True))
+    import copy
+
+def _hash(dictionary:dict) -> str:
+    """MD5 hash of a dictionary."""
+    dhash = hashlib.md5()
+    encoded = json.dumps(dictionary, sort_keys=True).encode()
+    dhash.update(encoded)
+    return dhash.hexdigest()
+
 
 def _send_event(invent:dict):
     __salt__["event.send"](
