@@ -110,10 +110,19 @@ def _linux_memdata(invent:dict):
         log.debug(f'audit: file /sys/class/dmi/id/{file_meminfo} is not exist') 
 
 def _linux_host_disk2stor_map(invent:dict):
+    def convert_size(disk:dict):
+        if 'size' in disk:
+            disk['size'] = disk['size'] // 1024 // 1024
+        if 'children' in disk:
+            for c in disk['children']:
+                convert_size(c)
+
     colums = 'NAME,SERIAL,VENDOR,MODEL,SIZE,TYPE,MOUNTPOINT,PKNAME,KNAME'
     out = _linux_cdm(['lsblk','-J','-b','-o',colums])
     try:
         invent["host_disk2stor_map"] = json.loads(out)['blockdevices']
+        for disk in invent["host_disk2stor_map"]:
+            convert_size(disk)        
     except json.JSONDecodeError:
         log.debug('audit: _linux_host_disk2stor_map JSONDecodeError, input{out}')
         invent["host_disk2stor_map"] = 'None'
@@ -171,11 +180,11 @@ def _linux_add_users(invent:dict):
     if os.path.exists(file_meminfo):
         with open(file_meminfo,'r',encoding='utf-8') as f: 
             for line in f:
-                u = line.split(':')
+                u = line.strip().split(':')
                 invent['host_users'].append({
                     "username": u[0],
-                    "uid": u[2],
-                    "gid": u[3],
+                    "uid": int(u[2]),
+                    "gid": int(u[3]),
                     "home_dir": u[5],
                     "shell": u[6]
 
