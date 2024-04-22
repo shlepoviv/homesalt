@@ -35,7 +35,7 @@ class WorkWithDB():
             with Session(self.engine) as session:
                 host = session.get(Host,data['id'])
                 if host:
-                    pass
+                    log.debug(f'write_inventory: find {data['id']} host in base')
                 else:
                     list_attr = ['host_disk2stor_map',
                                 'host_users',
@@ -57,4 +57,5 @@ class WorkWithDB():
                 session.add(host)
                 session.flush()
                 session.commit()
+                log.debug(f'write_inventory: {data['id']} host create in base')
 
