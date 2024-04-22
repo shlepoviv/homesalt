@@ -115,7 +115,7 @@ def _linux_memdata(invent:dict):
 def _linux_host_disk2stor_map(invent:dict):
     def convert_size(disk:dict):
         if 'size' in disk:
-            disk['size'] = disk['size'] // 1024 // 1024
+            disk['size'] = int(disk['size']) // 1024 // 1024
         if 'children' in disk:
             for c in disk['children']:
                 convert_size(c)
