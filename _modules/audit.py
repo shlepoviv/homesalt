@@ -252,13 +252,12 @@ def check(full=False, silent = False):
         _linux_add_pkgs_list(invent)
     
     old_cache = _read_from_cache() 
-    old_cache_hash = None
+    invent['old_cache_hash'] = None
+    invent['new_cache_hash'] = _hash(invent)
     if old_cache:
-        old_cache_hash = _hash(old_cache)
-    
-    new_cache_hash = _hash(invent)
+        invent['old_cache_hash'] = _hash(old_cache)  
 
-    if new_cache_hash != old_cache_hash:
+    if invent['new_cache_hash'] != invent['old_cache_hash']:
         _write_to_cache(invent)
     elif silent:
         return invent
