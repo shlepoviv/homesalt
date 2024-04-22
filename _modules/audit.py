@@ -268,7 +268,7 @@ def check(full=False, silent = False):
     _write_to_cache(invent)
     invent['old_cache_hash'] = old_cache_hash
     invent['new_hash'] = new_hash
-    if invent['new_cache_hash'] != invent['old_cache_hash']:
+    if invent['new_hash'] != invent['old_cache_hash']:
         log.debug('new cache != old cache')     
     elif silent:
         return invent
