@@ -256,14 +256,15 @@ def check(full=False, silent = False):
     
     old_cache = _read_from_cache() 
     log.debug(f'old_cache : {old_cache}')
-    invent['old_cache_hash'] = None
-    invent['new_cache_hash'] = _hash(invent)
+    old_cache_hash = None
     if old_cache:
-        invent['old_cache_hash'] = _hash(old_cache)  
-
+        old_cache_hash = _hash(old_cache)  
+    new_hash = _hash(invent)
+    _write_to_cache(invent)
+    invent['old_cache_hash'] = old_cache_hash
+    invent['new_hash'] = new_hash
     if invent['new_cache_hash'] != invent['old_cache_hash']:
-        _write_to_cache(invent)
-        log.debug('new cache != old cache')
+        log.debug('new cache != old cache')     
     elif silent:
         return invent
 
