@@ -3,10 +3,10 @@ util for work with db
 """
 import logging
 
-from sqlalchemy import create_engine, ExceptionContext
+from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
 
-from inventory_schema import Host,Host_disk2stor_map,Host_netadapter_html,Host_pkgs,Host_users
+from salt.utils.cmdb_schema.inventory_schema import Host,Host_disk2stor_map,Host_netadapter_html,Host_pkgs,Host_users
 
 log = logging.getLogger(__name__)
 
@@ -51,7 +51,7 @@ class WorkWithDB():
 
                     for n in data['data']['inventory']['host_netadapter_html']:
                         host.host_netadapter_html.append(Host_netadapter_html(**n))
-                        
+
                     for p in data['data']['inventory']['host_pkgs_list']:
                         host.host_pkgs.append(Host_pkgs(**p))
                 session.add(host)
