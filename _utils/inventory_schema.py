@@ -21,7 +21,7 @@ class Host(Base):
 
     host_ram: Mapped[int]
     swap_memory_size: Mapped[int]
-    
+
     host_serial_number: Mapped[str]
     host_vendor: Mapped[str]
     hostname: Mapped[str]
@@ -32,12 +32,15 @@ class Host(Base):
     host_os_name: Mapped[str]
     host_os_release: Mapped[str]
     host_os_version: Mapped[str]
-    
+
     host_dns_name: Mapped[str]
 
     host_ip_address: Mapped[str]
 
     host_model: Mapped[str]
+
+    old_cache_hash: Mapped[str]
+    new_hash: Mapped[str]
 
     host_dns_server: Mapped[list[str]] = mapped_column(ARRAY(String) )
     host_ip_addresses:  Mapped[list[str]] = mapped_column(ARRAY(String) )
@@ -54,10 +57,45 @@ class Host(Base):
         back_populates='host', cascade='all, delete-orphan'
     )
 
-    host_pkgs: Mapped[List['Host_pkgs']] = relationship(
+    host_pkgs_list: Mapped[List['Host_pkgs_list']] = relationship(
         back_populates='host', cascade="all, delete-orphan"
     )
-    
+
+    def __init__(self, **kwarg: Any): 
+        list_obj_attr = ['host_disk2stor_map',
+                                'host_users',
+                                'host_netadapter_html',
+                                'host_pkgs_list']
+        list_columns = Base.metadata.tables.get('host').c.keys()
+        list_columns.extend(list_obj_attr)
+        
+        host_disk2stor_map = kwarg.get('host_disk2stor_map',[])
+        for d in host_disk2stor_map:
+            self.host_disk2stor_map.append(Host_disk2stor_map(**d))
+
+        host_users = kwarg.get('host_users',[])
+        for u in host_users:
+            self.host_users.append(Host_users(**u))
+
+        host_netadapter_html = kwarg.get('host_netadapter_html',[])
+        for n in host_netadapter_html:
+            self.host_netadapter_html.append(Host_netadapter_html(**n))
+        
+        host_pkgs_list = kwarg.get('host_pkgs_list',[])
+        for p in host_pkgs_list:
+            self.host_pkgs_list.append(Host_pkgs_list(**p))           
+        super().__init__(**{k:v for k,v in kwarg.items() if 
+                       (k not in list_obj_attr) and (k in list_columns)})
+        
+    def get_diff(self,obj,list_attr=None):
+        diff = {}
+        list_columns = Base.metadata.tables.get('host').c.keys()
+        if not list_attr:
+            list_attr = list_columns
+        for c in list_attr:
+            if getattr(self,c) != getattr(obj,c):
+                diff[c] = [getattr(self,c),getattr(obj,c)]
+        return diff
 
 
 class Host_users(Base):
@@ -133,12 +171,12 @@ class Ips_info(Base):
     network: Mapped[str]
     alias: Mapped[str]
 
-class Host_pkgs(Base):
-    __tablename__ = 'host_pkgs'
+class Host_pkgs_list(Base):
+    __tablename__ = 'host_pkgs_list'
 
     host_pkg_id: Mapped[int] = mapped_column(primary_key=True)
     host_id: Mapped[str] = mapped_column(ForeignKey('host.host_id'))
-    host: Mapped['Host'] = relationship(back_populates='host_pkgs')
+    host: Mapped['Host'] = relationship(back_populates='host_pkgs_list')
 
     name: Mapped[str]
     version: Mapped[str]
