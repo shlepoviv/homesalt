@@ -27,7 +27,7 @@ class WorkWithDB():
     def _init_table(self):
         Host.metadata.create_all(self.engine)
 
-    def write_inventory(self,**data):
+    def write_inventory(self,data):
         """
         write inventory to db
         """
