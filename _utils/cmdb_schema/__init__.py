@@ -36,6 +36,11 @@ class WorkWithDB():
                 host = session.get(Host,data['id'])
                 if host:
                     log.debug(f'write_inventory: find {data["id"]} host in base')
+                    updatehost = Host(host_id=data['id'],**data['data']['inventory'])
+                    if host.get_diff(updatehost):
+                        log.debug(f'write_inventory: find {data["id"]} host in base with different attributes')
+                    else:
+                        log.debug(f'write_inventory: find {data["id"]} host in base')
                 else:
                     host = Host(host_id=data['id'],**data['data']['inventory'])
                 session.add(host)
