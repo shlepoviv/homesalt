@@ -6,7 +6,7 @@ import logging
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
 
-from inventory_schema import Host,Host_disk2stor_map,Host_netadapter_html,Host_pkgs,Host_users
+from inventory_schema import Host
 
 log = logging.getLogger(__name__)
 
