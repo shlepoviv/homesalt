@@ -128,7 +128,7 @@ def _linux_host_disk2stor_map(invent:dict):
             convert_size(disk)        
     except json.JSONDecodeError:
         log.debug('audit: _linux_host_disk2stor_map JSONDecodeError, input{out}')
-        invent["host_disk2stor_map"] = 'None'
+        invent["host_disk2stor_map"] = []
 
 
     
@@ -205,6 +205,13 @@ def _linux_add_pkgs_list(invent:dict):
             'version':v
         })  
 
+
+def _win_add_pass(invent:dict):
+    invent['host_pkgs_list'] = []
+    invent['host_users']=[]
+    invent['host_netadapter_html'] = []
+    invent["host_disk2stor_map"] = []
+
 def _write_to_cache(data):
     cachedir = __salt__["config.get"]("cachedir")
     context_cache = cache.ContextCache({'cachedir':cachedir}, "inventorycache")
@@ -217,9 +224,6 @@ def _read_from_cache():
         return context_cache.get_cache_context()
     except:
         return None
-
-def _hash(data):
-    import copy
 
 def _hash(dictionary:dict) -> str:
     """MD5 hash of a dictionary."""
@@ -258,6 +262,8 @@ def check(full=False, silent = False):
         _linux_add_dns_servers(invent)
         _linux_add_users(invent)
         _linux_add_pkgs_list(invent)
+    if invent['host_os_family_lu'].startswith('Windows'):
+        _win_add_pass(invent)
     
     old_cache = _read_from_cache() 
     log.debug(f'old_cache : {old_cache}')
