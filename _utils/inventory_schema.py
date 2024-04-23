@@ -69,19 +69,23 @@ class Host(Base):
         list_columns = Base.metadata.tables.get('host').c.keys()
         list_columns.extend(list_obj_attr)
         
-        host_disk2stor_map = kwarg.get('host_disk2stor_map',[])
+        host_disk2stor_map = kwarg['host_disk2stor_map'] if isinstance(
+            kwarg['host_disk2stor_map'],list) else []
         for d in host_disk2stor_map:
             self.host_disk2stor_map.append(Host_disk2stor_map(**d))
 
-        host_users = kwarg.get('host_users',[])
+        host_users = kwarg['host_users'] if isinstance(
+            kwarg['host_users'],list) else []
         for u in host_users:
             self.host_users.append(Host_users(**u))
 
-        host_netadapter_html = kwarg.get('host_netadapter_html',[])
+        host_netadapter_html = kwarg['host_netadapter_html'] if isinstance(
+            kwarg['host_netadapter_html'],list) else []
         for n in host_netadapter_html:
             self.host_netadapter_html.append(Host_netadapter_html(**n))
         
-        host_pkgs_list = kwarg.get('host_pkgs_list',[])
+        host_pkgs_list = kwarg['host_pkgs_list'] if isinstance(
+            kwarg['host_pkgs_list'],list) else []
         for p in host_pkgs_list:
             self.host_pkgs_list.append(Host_pkgs_list(**p))           
         super().__init__(**{k:v for k,v in kwarg.items() if 
