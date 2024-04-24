@@ -173,7 +173,7 @@ def _linux_host_disk2stor_map(invent:dict):
                 list_parent[-1]['children'].append(_parse_parm(line2)) 
                 prevlvl = lvl
 
-    for disk in invent["host_disk2stor_map"]:
+    for disk in res:
             convert_size(disk)  
              
     invent["host_disk2stor_map"] = res
