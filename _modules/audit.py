@@ -187,25 +187,45 @@ def _linux_hostnames(invent:dict):
     
 
 def _linux_netatapter(invent:dict):
-    out = _linux_cdm(['ip','-j','a'])
+    out = _linux_cdm(['ip','a']).splitlines()
+
+    pattern = re.compile(r'^\d*:\s*([^:]+)\s*:\s*<.+>')
+
     list_adapt = []
-    try:
-        adaptdata = json.loads(out)      
-        for a in adaptdata:
-            adapt = {}
-            adapt['name'] = a['ifname']
-            adapt['mac_address'] = a['address']
-            adapt['ips_info'] = []
-            for addr in a['addr_info']:
-                i = ipaddress.ip_interface(f'{addr["local"]}/{addr["prefixlen"]}')
-                adapt['ips_info'].append({"ip": str(i.ip),
-                                        "netmask": str(i.netmask),
-                                        "network": str(i.network),
-                                        "alias": addr.get('label','')})
-            list_adapt.append(adapt)
+    adapt = None
+
+    for line in out:
+        m = pattern.search(line)
+        if m:
+            if adapt:
+                list_adapt.append(adapt)
+            adapt = {'name' : m.group(1),
+                    'ips_info' : []}
+        else:
+            if adapt:
+                sline = line.split()
+
+                if sline[0].startswith('link'):
+                    adapt['mac_address'] = sline[1]
+                
+                elif sline[0].startswith('inet'):
+
+                    if '/' in sline[1]:
+                        ip, pref = sline[1].split('/')
+                    else:
+                        ip = sline[1]
+                        pref = 32           
+
+                    i = ipaddress.ip_interface(f'{ip}/{pref}')
+                    
+                    adapt['ips_info'].append({"ip": str(i.ip),
+                                                "netmask": str(i.netmask),
+                                                "network": str(i.network),
+                                                "alias": sline[-1] if not sline[0].startswith('inet6') else None})
         
-    except json.JSONDecodeError:
-        log.debug('audit: netatapter JSONDecodeError, input{out}')
+    if adapt:
+        list_adapt.append(adapt) 
+        
     invent['host_netadapter_html'] = list_adapt
 
 def _linux_ip_address(invent:dict):
