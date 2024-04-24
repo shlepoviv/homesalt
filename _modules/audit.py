@@ -112,6 +112,7 @@ def _linux_memdata(invent:dict):
     else: 
         log.debug(f'audit: file /sys/class/dmi/id/{file_meminfo} is not exist') 
 
+
 def _linux_host_disk2stor_map(invent:dict):
     def convert_size(disk:dict):
         if 'size' in disk:
@@ -119,16 +120,63 @@ def _linux_host_disk2stor_map(invent:dict):
         if 'children' in disk:
             for c in disk['children']:
                 convert_size(c)
+    
+    def _replace_hex_escaped(s):
+        r = s.string[s.regs[0][0]+2:s.regs[0][1]]
+        r = chr(int((r),16))
+        return r
+    
+    def _parse_parm(line):
+        i = 0
+        start = 0
+        res = {}
+        for par in list_param:
+            while line[i] != ' ' and i < len(line)-1:
+                i += 1 
+            if start == i:
+                res[par] = None
+            else:         
+                res[par] = re.sub(r'\\x[0-9A-Fa-f][0-9A-Fa-f]',_replace_hex_escaped,line[start:i])
+            i += 1
+            start = i
+        return res
 
-    colums = 'NAME,SERIAL,VENDOR,MODEL,SIZE,TYPE,MOUNTPOINT,PKNAME,KNAME'
-    out = _linux_cdm(['lsblk','-J','-b','-o',colums])
-    try:
-        invent["host_disk2stor_map"] = json.loads(out)['blockdevices']
-        for disk in invent["host_disk2stor_map"]:
-            convert_size(disk)        
-    except json.JSONDecodeError:
-        log.debug('audit: _linux_host_disk2stor_map JSONDecodeError, input{out}')
-        invent["host_disk2stor_map"] = []
+    list_param = ['name', 'serial', 'vendor', 'model', 'size', 'type', 'mountpoint', 'pkname', 'kname']
+    out1 = _linux_cdm(['lsblk','-n','-io','name']).split('\n')
+    out2 = _linux_cdm(['lsblk','-n','-r','-ibo',','.join(list_param)]).split('\n')
+    
+    res = []
+    list_parent = []
+    prevlvl = 0
+    for line, line2 in zip(out1,out2):
+        i = 0       
+        while line[i] in (' ','`','|','-'):
+            i +=1
+        lvl = i//2
+        if lvl == 0:
+            res.append(_parse_parm(line2))
+            list_parent.clear()
+            prevlvl = 0
+        else:
+            if prevlvl < lvl:
+                if not list_parent:
+                    list_parent.append(res[-1])
+                else:
+                    list_parent.append(list_parent[-1]['children'][-1])
+                list_parent[-1]['children'] = [_parse_parm(line2)]
+                prevlvl = lvl
+            elif prevlvl == lvl:
+                list_parent[-1]['children'].append(_parse_parm(line2))             
+            elif prevlvl > lvl:
+                for _ in range(prevlvl - lvl):
+                    list_parent.pop()
+                list_parent[-1]['children'].append(_parse_parm(line2)) 
+                prevlvl = lvl
+
+    for disk in invent["host_disk2stor_map"]:
+            convert_size(disk)  
+             
+    invent["host_disk2stor_map"] = res
 
 
     
@@ -139,7 +187,7 @@ def _linux_hostnames(invent:dict):
     
 
 def _linux_netatapter(invent:dict):
-    out = _linux_cdm(['ip','-j','-d','a'])
+    out = _linux_cdm(['ip','-j','a'])
     list_adapt = []
     try:
         adaptdata = json.loads(out)      
