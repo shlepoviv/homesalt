@@ -220,18 +220,22 @@ def _win_add_pass(invent:dict):
     invent['host_netadapter_html'] = []
     invent["host_disk2stor_map"] = []
 
-def _write_to_cache(data):
-    cachedir = __salt__["config.get"]("cachedir")
-    context_cache = cache.ContextCache({'cachedir':cachedir}, "inventorycache")
-    context_cache.cache_context(data.copy())
+def _write_to_cache(dictionary: dict):
+    cachedir = __opts__["cachedir"]
+    cache_path = os.path.join(cachedir,'discovering','inventory')
+    if not os.path.isdir(os.path.dirname(cache_path)):
+        os.mkdir(os.path.dirname(cache_path))
+    with open(cache_path, "w") as cache:
+        json.dump(dictionary, cache)
 
 def _read_from_cache():
-    cachedir = __salt__["config.get"]("cachedir")
-    try:
-        context_cache = cache.ContextCache({'cachedir':cachedir}, "inventorycache")
-        return context_cache.get_cache_context()
-    except:
-        return None
+    cachedir = __opts__["cachedir"]
+    cache_path = os.path.join(cachedir,'discovering','inventory')
+    res = None
+    if os.path.exists(cache_path):        
+        with open(cache_path, "r") as cache:
+            res = json.load(cache)
+    return res
 
 def _hash(dictionary: dict) -> str:
     """MD5 hash each item of a dictionary."""
