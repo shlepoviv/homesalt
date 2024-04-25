@@ -9,6 +9,7 @@ import logging
 import os
 import json
 import ipaddress
+import hashlib
 
 log = logging.getLogger(__name__)
 
@@ -213,7 +214,49 @@ def _linux_add_pkgs_list(invent:dict):
         })  
 
 
-def check():
+def _win_add_pass(invent:dict):
+    invent['host_pkgs_list'] = []
+    invent['host_users']=[]
+    invent['host_netadapter_html'] = []
+    invent["host_disk2stor_map"] = []
+
+def _write_to_cache(data):
+    cachedir = __salt__["config.get"]("cachedir")
+    context_cache = cache.ContextCache({'cachedir':cachedir}, "inventorycache")
+    context_cache.cache_context(data.copy())
+
+def _read_from_cache():
+    cachedir = __salt__["config.get"]("cachedir")
+    try:
+        context_cache = cache.ContextCache({'cachedir':cachedir}, "inventorycache")
+        return context_cache.get_cache_context()
+    except:
+        return None
+
+def _hash(dictionary: dict) -> str:
+    """MD5 hash each item of a dictionary."""
+    def _get_h(s: str):
+        dhash = hashlib.md5()
+        dhash.update(s.encode())
+        return dhash.hexdigest()
+
+    res = {}
+    for key, val in dictionary.items():
+        if isinstance(val, str):
+            res[key] = _get_h(val)
+        else:
+            res[key] = _get_h(json.dumps(val, sort_keys=True))
+    return res
+
+
+def _send_event(invent:dict):
+    __salt__["event.send"](
+            "custom/discovery/inventory/check",
+            {"finished": True, "message": "audit result",'inventory':invent},
+        )
+        
+
+def check(full=False, silent = False):
     '''
     launching audite
     '''
