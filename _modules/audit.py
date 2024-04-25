@@ -295,20 +295,23 @@ def _read_from_cache():
             res = json.load(cache)
     return res
 
-def _hash(dictionary: dict) -> str:
+def _hash(dictionary: dict,collapse = False) -> str:
     """MD5 hash each item of a dictionary."""
     def _get_h(s: str):
         dhash = hashlib.md5()
         dhash.update(s.encode())
         return dhash.hexdigest()
-
-    res = {}
-    for key, val in dictionary.items():
-        if isinstance(val, str):
-            res[key] = _get_h(val)
-        else:
-            res[key] = _get_h(json.dumps(val, sort_keys=True))
-    return res
+    
+    if collapse:
+        return _get_h(json.dumps(dictionary, sort_keys=True))  
+    else:  
+        res = {}
+        for key, val in dictionary.items():
+            if isinstance(val, str):
+                res[key] = _get_h(val)
+            else:
+                res[key] = _get_h(json.dumps(val, sort_keys=True))
+        return res
 
 
 def _send_event(invent:dict):
@@ -344,25 +347,24 @@ def check(full=False, silent = False):
         _win_add_pass(invent)
     
     old_cache = _read_from_cache() 
-    log.debug(f'old_cache : {old_cache}')
     old_cache_hash = None
     if old_cache:
-        old_cache_hash = _hash(old_cache)  
-    new_hash = _hash(invent)
-    _write_to_cache(invent)
-    invent['old_cache_hash'] = old_cache_hash
-    invent['new_hash'] = new_hash
-    if invent['new_hash'] != invent['old_cache_hash']:
-        log.debug('new cache != old cache')     
-    elif silent:
-        return invent
+        old_cache_hash = _hash(old_cache, collapse=True)  
+    new_cache = _hash(invent)
+    _write_to_cache(new_cache)
+    new_cache_hash = _hash(new_cache, collapse=True)
 
-    if not full:
-        for key, val in invent.items():
-            if isinstance(val,list):
-                if len(val) > 1:
-                    if isinstance(val[0],dict):
-                        invent[key] = f'count {len(val)}'
+    invent['old_cache_hash'] = old_cache_hash
+    invent['new_hash'] = new_cache_hash
+
+    if old_cache_hash:            
+        if invent['new_hash'] != invent['old_cache_hash']:
+            if not full:
+                for key in new_cache:
+                    if new_cache[key] == old_cache.get(key,None):
+                        del invent[key]
+        elif silent:
+            return invent
 
     if invent:
         _send_event(invent)
