@@ -1,7 +1,7 @@
 from typing import Any, Optional, List
 from sqlalchemy import ForeignKey, String
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
-from sqlalchemy.dialects.postgresql import ARRAY
+from sqlalchemy.dialects.postgresql import ARRAY,JSONB
 
 
 class Base(DeclarativeBase):
@@ -69,23 +69,19 @@ class Host(Base):
         list_columns = Base.metadata.tables.get('host').c.keys()
         list_columns.extend(list_obj_attr)
         
-        host_disk2stor_map = kwarg['host_disk2stor_map'] if isinstance(
-            kwarg['host_disk2stor_map'],list) else []
+        host_disk2stor_map = kwarg.get('host_disk2stor_map',[])
         for d in host_disk2stor_map:
             self.host_disk2stor_map.append(Host_disk2stor_map(**d))
 
-        host_users = kwarg['host_users'] if isinstance(
-            kwarg['host_users'],list) else []
+        host_users = kwarg.get('host_users',[])
         for u in host_users:
             self.host_users.append(Host_users(**u))
 
-        host_netadapter_html = kwarg['host_netadapter_html'] if isinstance(
-            kwarg['host_netadapter_html'],list) else []
+        host_netadapter_html = kwarg.get('host_netadapter_html',[])
         for n in host_netadapter_html:
             self.host_netadapter_html.append(Host_netadapter_html(**n))
         
-        host_pkgs_list = kwarg['host_pkgs_list'] if isinstance(
-            kwarg['host_pkgs_list'],list) else []
+        host_pkgs_list = kwarg.get('host_pkgs_list',[])
         for p in host_pkgs_list:
             self.host_pkgs_list.append(Host_pkgs_list(**p))           
         super().__init__(**{k:v for k,v in kwarg.items() if 
@@ -100,6 +96,10 @@ class Host(Base):
             if getattr(self,c) != getattr(obj,c):
                 diff[c] = [getattr(self,c),getattr(obj,c)]
         return diff
+    
+    def __repr__(self):
+        list_columns = Base.metadata.tables.get('host').c.keys()
+        return '\n'.join([f'{c}: {getattr(self,c)}' for c in list_columns])
 
 
 class Host_users(Base):
@@ -132,17 +132,8 @@ class Host_disk2stor_map(Base):
     mountpoint: Mapped[str]
     pkname: Mapped[str]
     kname: Mapped[str]
+    children: Mapped[Optional[Any]] = mapped_column(JSONB)
 
-    # id_children: Mapped[List[int]] = mapped_column(ForeignKey('host_disk2stor_map.id')) 
-    # children: Mapped[List['Host_disk2stor_map']] = relationship(
-    #     back_populates='machine', cascade="all, delete-orphan"
-    # )
-
-    def __init__(self, **kwarg: Any):            
-        if 'children' in kwarg:
-            children = kwarg.pop('children')
-            # self.children(Host_disk2stor_map(**children))
-        super().__init__(**kwarg)
 
 class Host_netadapter_html(Base):
     __tablename__ = 'host_netadapter_html'
@@ -184,4 +175,3 @@ class Host_pkgs_list(Base):
 
     name: Mapped[str]
     version: Mapped[str]
-
