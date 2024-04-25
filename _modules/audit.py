@@ -11,8 +11,6 @@ import json
 import ipaddress
 import hashlib
 
-import salt.utils.cache as cache
-
 log = logging.getLogger(__name__)
 
 
@@ -293,12 +291,20 @@ def _read_from_cache():
     except:
         return None
 
-def _hash(dictionary:dict) -> str:
-    """MD5 hash of a dictionary."""
-    dhash = hashlib.md5()
-    encoded = json.dumps(dictionary, sort_keys=True).encode()
-    dhash.update(encoded)
-    return dhash.hexdigest()
+def _hash(dictionary: dict) -> str:
+    """MD5 hash each item of a dictionary."""
+    def _get_h(s: str):
+        dhash = hashlib.md5()
+        dhash.update(s.encode())
+        return dhash.hexdigest()
+
+    res = {}
+    for key, val in dictionary.items():
+        if isinstance(val, str):
+            res[key] = _get_h(val)
+        else:
+            res[key] = _get_h(json.dumps(val, sort_keys=True))
+    return res
 
 
 def _send_event(invent:dict):
