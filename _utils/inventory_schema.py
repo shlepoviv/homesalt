@@ -1,11 +1,12 @@
 from typing import Any, Optional, List
 from sqlalchemy import ForeignKey, String
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
-from sqlalchemy.dialects.postgresql import ARRAY,JSONB
+from sqlalchemy.dialects.postgresql import ARRAY, JSONB
 
 
 class Base(DeclarativeBase):
     pass
+
 
 class Host(Base):
     __tablename__ = 'host'
@@ -42,8 +43,8 @@ class Host(Base):
     old_cache_hash: Mapped[str]
     new_hash: Mapped[str]
 
-    host_dns_server: Mapped[list[str]] = mapped_column(ARRAY(String) )
-    host_ip_addresses:  Mapped[list[str]] = mapped_column(ARRAY(String) )
+    host_dns_server: Mapped[list[str]] = mapped_column(ARRAY(String))
+    host_ip_addresses:  Mapped[list[str]] = mapped_column(ARRAY(String))
 
     host_disk2stor_map: Mapped[List['Host_disk2stor_map']] = relationship(
         back_populates='host', cascade='all, delete-orphan'
@@ -61,42 +62,42 @@ class Host(Base):
         back_populates='host', cascade="all, delete-orphan"
     )
 
-    def __init__(self, **kwarg: Any): 
+    def __init__(self, **kwarg: Any):
         list_obj_attr = ['host_disk2stor_map',
-                                'host_users',
-                                'host_netadapter_html',
-                                'host_pkgs_list']
+                         'host_users',
+                         'host_netadapter_html',
+                         'host_pkgs_list']
         list_columns = Base.metadata.tables.get('host').c.keys()
         list_columns.extend(list_obj_attr)
-        
-        host_disk2stor_map = kwarg.get('host_disk2stor_map',[])
+
+        host_disk2stor_map = kwarg.get('host_disk2stor_map', [])
         for d in host_disk2stor_map:
             self.host_disk2stor_map.append(Host_disk2stor_map(**d))
 
-        host_users = kwarg.get('host_users',[])
+        host_users = kwarg.get('host_users', [])
         for u in host_users:
             self.host_users.append(Host_users(**u))
 
-        host_netadapter_html = kwarg.get('host_netadapter_html',[])
+        host_netadapter_html = kwarg.get('host_netadapter_html', [])
         for n in host_netadapter_html:
             self.host_netadapter_html.append(Host_netadapter_html(**n))
-        
-        host_pkgs_list = kwarg.get('host_pkgs_list',[])
+
+        host_pkgs_list = kwarg.get('host_pkgs_list', [])
         for p in host_pkgs_list:
-            self.host_pkgs_list.append(Host_pkgs_list(**p))           
-        super().__init__(**{k:v for k,v in kwarg.items() if 
-                       (k not in list_obj_attr) and (k in list_columns)})
-        
-    def get_diff(self,obj,list_attr=None):
+            self.host_pkgs_list.append(Host_pkgs_list(**p))
+        super().__init__(**{k: v for k, v in kwarg.items() if
+                            (k not in list_obj_attr) and (k in list_columns)})
+
+    def get_diff(self, obj, list_attr=None):
         diff = {}
         list_columns = Base.metadata.tables.get('host').c.keys()
         if not list_attr:
             list_attr = list_columns
         for c in list_attr:
-            if getattr(self,c) != getattr(obj,c):
-                diff[c] = [getattr(self,c),getattr(obj,c)]
+            if getattr(self, c) != getattr(obj, c):
+                diff[c] = [getattr(self, c), getattr(obj, c)]
         return diff
-    
+
     def __repr__(self):
         list_columns = Base.metadata.tables.get('host').c.keys()
         return '\n'.join([f'{c}: {getattr(self,c)}' for c in list_columns])
@@ -108,17 +109,18 @@ class Host_users(Base):
     user_id: Mapped[int] = mapped_column(primary_key=True)
     host_id: Mapped[str] = mapped_column(ForeignKey('host.host_id'))
     host: Mapped['Host'] = relationship(back_populates='host_users')
-    
+
     username: Mapped[str]
     uid: Mapped[int]
     gid: Mapped[int]
     home_dir: Mapped[str]
     shell: Mapped[str]
 
+
 class Host_disk2stor_map(Base):
     __tablename__ = 'host_disk2stor_map'
 
-    disk_id: Mapped[int] = mapped_column(primary_key=True) 
+    disk_id: Mapped[int] = mapped_column(primary_key=True)
     host_id: Mapped[str] = mapped_column(ForeignKey('host.host_id'))
     host: Mapped['Host'] = relationship(back_populates='host_disk2stor_map')
 
@@ -146,25 +148,28 @@ class Host_netadapter_html(Base):
     mac_address: Mapped[str]
     ips_info: Mapped[List['Ips_info']] = relationship(back_populates='host_netadapter_html',
                                                       cascade='all, delete-orphan')
-    
-    def __init__(self, **kwarg: Any):               
+
+    def __init__(self, **kwarg: Any):
         if 'ips_info' in kwarg:
             for ips in kwarg.pop('ips_info'):
                 self.ips_info.append(Ips_info(**ips))
         super().__init__(**kwarg)
-            
+
 
 class Ips_info(Base):
     __tablename__ = 'ips_info'
 
     ips_id: Mapped[int] = mapped_column(primary_key=True)
-    host_id_netadapter_html: Mapped[int] = mapped_column(ForeignKey('host_netadapter_html.neadapter_id'))
-    host_netadapter_html: Mapped['Host_netadapter_html'] = relationship(back_populates='ips_info')
+    host_id_netadapter_html: Mapped[int] = mapped_column(
+        ForeignKey('host_netadapter_html.neadapter_id'))
+    host_netadapter_html: Mapped['Host_netadapter_html'] = relationship(
+        back_populates='ips_info')
 
     ip: Mapped[str]
     netmask: Mapped[str]
     network: Mapped[str]
     alias: Mapped[str]
+
 
 class Host_pkgs_list(Base):
     __tablename__ = 'host_pkgs_list'
