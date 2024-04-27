@@ -69,7 +69,7 @@ class Host(Base):
                          'host_pkgs_list']
         list_columns = Base.metadata.tables.get('host').c.keys()
         list_columns.extend(list_obj_attr)
-
+        
         host_disk2stor_map = kwarg.get('host_disk2stor_map', [])
         for d in host_disk2stor_map:
             self.host_disk2stor_map.append(Host_disk2stor_map(**d))
