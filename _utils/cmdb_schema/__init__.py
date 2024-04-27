@@ -31,6 +31,7 @@ class WorkWithDB():
         """
         write inventory to db
         """
+        log.error(f'work with db engine: {self.engine}')
         if self.engine:
             with Session(self.engine) as session:
                 log.error(f'work with db data {str(data)}')
