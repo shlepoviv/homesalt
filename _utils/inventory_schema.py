@@ -180,3 +180,5 @@ class Host_pkgs_list(Base):
 
     name: Mapped[str]
     version: Mapped[str]
+
+#test sycn_utils
