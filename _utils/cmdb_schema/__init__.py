@@ -33,7 +33,7 @@ class WorkWithDB():
         """
         if self.engine:
             with Session(self.engine) as session:
-                log.debug(f'work with db data {str(data)}')
+                log.error(f'work with db data {str(data)}')
                 host = Host(host_id=data['id'], **data['data']['inventory'])
                 upgreded_host = session.merge(host)
                 session.commit()
