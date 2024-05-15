@@ -10,8 +10,8 @@ log = logging.getLogger(__name__)
 
 
 def write(data):
-    TraceM.start()
-    TraceM.dumptrace()
+    tr = TraceM()
     db = WorkWithDB()
     db.write_inventory(data)
+    tr.dumptrace()
     return True
