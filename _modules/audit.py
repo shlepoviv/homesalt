@@ -23,8 +23,7 @@ def _linux_cdm(cmd: list[str], timeout: int = 3):
             outs, errs = proc.communicate(timeout=timeout)
         except subprocess.SubprocessError as e:
             proc.kill()
-            log.debug(f'audit _linux_cdm: {e}')
-            log.debug(f'audit _linux_cdm: {e}')
+            log.error(f'audit _linux_cdm: {e}')
             return 'None'
     return outs.decode('utf-8').rstrip()
 
@@ -197,7 +196,6 @@ def _linux_netatapter(invent: dict):
     pattern = re.compile(r'^\d*:\s*([^:]+)\s*:\s*<.+>')
 
     list_adapt = []
-
     adapt = None
 
     for line in out:
@@ -261,13 +259,13 @@ def _linux_add_users(invent: dict):
     if os.path.exists(file_meminfo):
         with open(file_meminfo, 'r', encoding='utf-8') as f:
             for line in f:
-                u = line.split(':')
+                u = line.strip().split(':')
                 invent['host_users'].append({
                     "username": u[0],
-                    "uid": u[2],
-                    "gid": u[3],
-                    "home_dir": u[4],
-                    "shell": u[5]
+                    "uid": int(u[2]),
+                    "gid": int(u[3]),
+                    "home_dir": u[5],
+                    "shell": u[6]
 
                 })
     else:
