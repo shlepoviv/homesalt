@@ -4,4 +4,4 @@ write:
   salt.runner:
     - name: auditdb.write
     - arg:
-        - {{ data }}
+        - {{ data|json }}
