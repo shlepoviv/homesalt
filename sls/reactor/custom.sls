@@ -1,7 +1,3 @@
-runorch:
-  runner.state.orchestrate:
-    - args:
-        - mods: sls.orch.customreact
-        - pillar:
-            event_tag: {{ tag }}
-            event_data: {{ data }}
+reactor_all_tag:
+  runner.auditdb.write:
+    - data: {{ data|json }}
