@@ -81,7 +81,8 @@ def start(include_tags=None, exclude_tags=None):
         while True:
             event = event_bus.get_event(full=True)
             if event and _match_tag(event["tag"], include_tags, exclude_tags):
-                jevent = salt.utils.json.dumps(event)
-                __runners__["auditdb.write"](jevent)
-                with open('/home/shlepov/log_test_engine','a') as f:
-                    f.write(jevent+ "\n")
+                log.debug(f"test engine geted event {event["tag"]}")
+                # jevent = salt.utils.json.dumps(event)
+                __runners__["auditdb.write"](event["data"])
+                # with open('/home/shlepov/log_test_engine','a') as f:
+                #     f.write(jevent+ "\n")
