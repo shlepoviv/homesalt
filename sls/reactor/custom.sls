@@ -1,5 +1,5 @@
 reactor_all_tag:
-  salt.runner:
-    - name: auditdb.write
+  runner.auditdb:
+    - name: write
     - arg:
         - {{ data|json }}
