@@ -1,6 +1,9 @@
 import psutil
 
 def memory():
+    """
+    Return memory using salt-minion
+    """
     procs=[]
 
     current_process = psutil.Process()
@@ -17,4 +20,4 @@ def memory():
     if procs:
         alloc_mem = int(sum([i.memory_info().rss for i in procs])/1024/1024)
     return alloc_mem
-    
+
