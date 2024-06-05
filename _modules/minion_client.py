@@ -1,9 +1,10 @@
-import psutil
+
 
 def memory():
     """
     Return memory using salt-minion
     """
+    import psutil
     procs=[]
 
     current_process = psutil.Process()
