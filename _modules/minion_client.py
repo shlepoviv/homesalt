@@ -12,7 +12,7 @@ def memory():
     for proc in psutil.process_iter():
         try:
             if '/bin/salt-minion' in ' '.join(proc.cmdline()):
-                if proc.pid != current_process.pid:
+                # if proc.pid != current_process.pid:
                     procs.append(proc)
         except psutil.ZombieProcess:
             pass
