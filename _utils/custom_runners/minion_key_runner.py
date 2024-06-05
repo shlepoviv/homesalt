@@ -21,7 +21,7 @@ class MinionKey:
             min_id = min_key.name
             time.sleep(timeout)
             try:
-                print(socket.gethostbyname(min_id))
+                socket.gethostbyname(min_id)
             except OSError:
                 res.append(min_id)
         if remove_key:
