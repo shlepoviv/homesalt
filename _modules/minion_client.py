@@ -23,6 +23,6 @@ def memory():
     alloc_mem = 0        
     if procs:
         alloc_mem = int(sum([i.memory_info().rss for i in procs])/1024/1024)
-    cur_mem = int(sum([i.memory_info().rss for i in procs])/1024/1024)
+    cur_mem = int(current_process.memory_info().rss/1024/1024)
     return {'All poroc':alloc_mem, 'Current process': cur_mem}
 
