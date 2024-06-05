@@ -15,7 +15,7 @@ def memory():
     for proc in psutil.process_iter():
         try:
             if '/bin/salt-minion' in ' '.join(proc.cmdline()):
-                # if proc.pid != current_process.pid:
+                if proc.pid != current_process.pid:
                     procs.append(proc)
         except psutil.ZombieProcess:
             pass
@@ -23,5 +23,6 @@ def memory():
     alloc_mem = 0        
     if procs:
         alloc_mem = int(sum([i.memory_info().rss for i in procs])/1024/1024)
-    return {'All poroc':alloc_mem, 'Current process': current_process.memory_info().rss}
+    cur_mem = int(sum([i.memory_info().rss for i in procs])/1024/1024)
+    return {'All poroc':alloc_mem, 'Current process': cur_mem}
 
