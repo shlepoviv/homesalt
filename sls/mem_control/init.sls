@@ -12,7 +12,7 @@ mem_leak_check:
     - function: cmd.run
     - job_args:
       - "/home/shlepov/.pyenv/versions/3.9.16/bin/python3.9 mem_leak.py || echo can not start mem_leak >> /app/salt/var/log/salt/mem_leak_error.log"
-      - /app/salt/modules/
+      - /app/saltcmdb/modules/
     - seconds: 60
     - return_job: false
     - jid_include: false

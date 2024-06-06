@@ -16,10 +16,7 @@ for proc in psutil.process_iter():
     try:
         loging(f'proc {proc.name()} | {" ".join(proc.cmdline())}')
         if 'mem_leak.py' in ' '.join(proc.cmdline()):
-            if proc.pid == current_process.pid:
-                continue
-            else:
-                psutil.sys.exit()
+            continue
         if '/bin/salt-minion' in ' '.join(proc.cmdline()):
             if proc.pid != current_process.pid:
                 procs.append(proc)
