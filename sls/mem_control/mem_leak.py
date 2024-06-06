@@ -14,7 +14,7 @@ loging(f'start')
 
 for proc in psutil.process_iter():
     try:
-        
+        loging(f'proc {proc.name()} | {' '.join(proc.cmdline())}')
         if 'mem_leak.py' in ' '.join(proc.cmdline()):
             if proc.pid == current_process.pid:
                 continue
