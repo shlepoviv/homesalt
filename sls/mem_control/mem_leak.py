@@ -18,8 +18,8 @@ for proc in psutil.process_iter():
         if 'mem_leak.py' in ' '.join(proc.cmdline()):
             if proc.pid == current_process.pid:
                 continue
-            # else:
-            #     psutil.sys.exit()
+            else:
+                psutil.sys.exit()
         if '/bin/salt-minion' in ' '.join(proc.cmdline()):
             if proc.pid != current_process.pid:
                 procs.append(proc)
