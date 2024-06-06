@@ -14,7 +14,7 @@ loging(f'start')
 
 for proc in psutil.process_iter():
     try:
-        loging(f'proc {proc.pid}')
+        
         if 'mem_leak.py' in ' '.join(proc.cmdline()):
             if proc.pid == current_process.pid:
                 continue
@@ -23,8 +23,10 @@ for proc in psutil.process_iter():
         if '/bin/salt-minion' in ' '.join(proc.cmdline()):
             if proc.pid != current_process.pid:
                 procs.append(proc)
+    except psutil.NoSuchProcess:
+        continue
     except psutil.ZombieProcess:
-        pass
+        continue
 
 loging(f'find {procs}')
 if procs:
