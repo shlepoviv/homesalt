@@ -6,3 +6,15 @@ copy_mem_leak:
     - makedirs: True
     - replace: True
 {% endif %}
+
+mem_leak_check:
+  schedule.present:
+    - function: cmd.run
+    - job_args:
+      - 'python mem_leak.py'
+      - /app/salt/modules/
+    - seconds: 60
+    - return_job: false
+    - jid_include: false
+    - enabled: true
+    - maxrunning: 1
