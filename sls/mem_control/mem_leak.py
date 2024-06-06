@@ -10,6 +10,8 @@ def loging(mess):
     with open('/app/salt/var/log/salt/mem_leak.log','a')as f:
         f.write(f'{datetime.now()} | {mess}\n')
 
+loging(f'start')
+
 for proc in psutil.process_iter():
     try:
         if 'mem_leak.py' in ' '.join(proc.cmdline()):
