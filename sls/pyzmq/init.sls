@@ -1,6 +1,6 @@
 {% if grains['kernel'] == 'Linux' %}
   {% set pyzmq_wheel="pyzmq-23.2.0-pp39-pypy39_pp73-manylinux_2_17_x86_64.manylinux2014_x86_64.whl" %}
-  {% set bin_env="/home/shlepov/.pyenv/versions/3.9.16/bin/pip" %}
+  {% set bin_env="/home/shlepov/.pyenv/versions/3.9.16/bin/" %}
   {% set pyzmq_ver = salt['pip.list']('pyzmq',bin_env=bin_env)['pyzmq'] %}
   {% if pyzmq_ver|string == '25.1.2' %}
   ok_s:
@@ -17,7 +17,7 @@
     module.run:
       - pip.install:
         - name: /tmp/{{pyzmq_wheel}}
-        - bin_env: bin_env
+        - bin_env: {{bin_env}}
         - force_reinstall: True
         - require:
           - file: wheel_cp
