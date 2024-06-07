@@ -1,6 +1,6 @@
 {% if grains['kernel'] == 'Linux' %}
-  {% set bin_env="/home/shlepov/.pyenv/versions/3.9.16/bin" %}
-  {% set pyzmq_ver = salt['pip.list']('pyzmq',bin_env=bin_env) %}
+#  {% set bin_env="/home/shlepov/.pyenv/versions/3.9.16/bin" %}
+  {% set pyzmq_ver = salt['pip.list']('pyzmq') %}
   {% if pyzmq_ver|string == '25.1.2' %}
   ok_s:
     test.succeed_without_changes:
