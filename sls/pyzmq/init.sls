@@ -14,14 +14,16 @@
       - replace: True
 
   pyzmq_23:
-    - pip.install:
-      - name: /tmp/{{pyzmq_wheel}}
-      - bin_env: {{bin_env}}
-      - force_reinstall: True
-      - ignore_installed: True
-      - use_wheel: True
-      - require:
-        - file: wheel_cp
+    module.run:
+      - pip.install:
+        - pkg: 
+          - /tmp/{{pyzmq_wheel}}
+        - bin_env: {{bin_env}}
+        - force_reinstall: True
+        - ignore_installed: True
+        - use_wheel: True
+        - require:
+          - file: wheel_cp
 
   # wheel_remove:
   #   module.run:
