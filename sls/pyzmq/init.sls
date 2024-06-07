@@ -15,6 +15,12 @@
   #     - force_reinstall: True
   #     - require:
   #       - module: wheel_cp
+
+  wheel_cp:
+    file.remove:
+      - name: /tmp/pyzmq-23_2_0.whl
+      - require:
+          - module: wheel_cp
   {% else %}
   ok_s:
     test.succeed_without_changes:
