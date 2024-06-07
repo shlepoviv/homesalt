@@ -18,8 +18,8 @@
       - pip.uninstall:
         - pkgs: pyzmq
         - bin_env: {{bin_env}}
-        - require:
-          - file: wheel_cp
+      - require:
+        - file: wheel_cp
 
   pyzmq_23:
     module.run:
@@ -28,8 +28,8 @@
         - bin_env: {{bin_env}}
         - force_reinstall: True
         - ignore_installed: True
-        - require:
-          - module: unistall_pyzmq_25
+      - require:
+        - module: unistall_pyzmq_25
 
   # wheel_remove:
   #   module.run:
