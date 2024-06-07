@@ -9,19 +9,19 @@
       - source: salt://sls/pyzmq/pyzmq-23_2_0.whl
       - replace: True
 
-  # pyzmq_23:
-  #   pip.installed:
-  #     - name: /tmp/pyzmq-23.2.0.whl
-  #     - force_reinstall: True
-  #     - require:
-  #       - module: wheel_cp
+  pyzmq_23:
+    pip.installed:
+      - name: /tmp/pyzmq-23.2.0.whl
+      - force_reinstall: True
+      - require:
+        - module: wheel_cp
 
   wheel_remove:
     module.run:
       - file.remove:
         - path: /tmp/pyzmq-23_2_0.whl
         - require:
-            - file: wheel_cp
+            - pip: pyzmq_23
   {% else %}
   ok_s:
     test.succeed_without_changes:
