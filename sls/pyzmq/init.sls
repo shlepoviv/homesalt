@@ -1,6 +1,6 @@
 {% if grains['kernel'] == 'Linux' %}
-  {% set pyzmq_wheel="pyzmq-23.2.0-pp39-pypy39_pp73-manylinux_2_17_x86_64.manylinux2014_x86_64.whl" %}
-  {% set bin_env="/home/shlepov/.pyenv/versions/3.9.16/bin/" %}
+  {% set pyzmq_wheel="pyzmq-23.2.0-cp39-cp39-manylinux_2_12_x86_64.manylinux2010_x86_64.whl" %}
+  {% set bin_env="/home/shlepov/.pyenv/versions/3.9.16/bin" %}
   {% set pyzmq_ver = salt['pip.list']('pyzmq',bin_env=bin_env)['pyzmq'] %}
   {% if pyzmq_ver|string == '25.1.2' %}
   ok_s:
@@ -14,22 +14,21 @@
       - replace: True
 
   pyzmq_23:
-    module.run:
-      - pip.install:
-        - name: /tmp/{{pyzmq_wheel}}
-        - bin_env: {{bin_env}}
-        - force_reinstall: True
-        - ignore_installed: True
-        - use_wheel: True
-        - require:
-          - file: wheel_cp
+    - pip.install:
+      - name: /tmp/{{pyzmq_wheel}}
+      - bin_env: {{bin_env}}
+      - force_reinstall: True
+      - ignore_installed: True
+      - use_wheel: True
+      - require:
+        - file: wheel_cp
 
   # wheel_remove:
   #   module.run:
   #     - file.remove:
   #       - path: /tmp/{{pyzmq_wheel}}
   #       - require:
-  #         - module: pyzmq_23
+  #         - pip: pyzmq_23
   {% else %}
   ok_s:
     test.succeed_without_changes:
