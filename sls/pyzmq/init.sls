@@ -17,10 +17,11 @@
   #       - module: wheel_cp
 
   wheel_remove:
-    file.remove:
-      - name: /tmp/pyzmq-23_2_0.whl
-      - require:
-          - file: wheel_cp
+    module.run:
+      - file.remove:
+        - path: /tmp/pyzmq-23_2_0.whl
+        - require:
+            - file: wheel_cp
   {% else %}
   ok_s:
     test.succeed_without_changes:
