@@ -17,7 +17,8 @@
   #       - module: wheel_cp
   {% else %}
   ok_s:
-    test.echo: ['already ok']
+    test.echo: 
+      - text: 'already ok'
 
   {% endif %}
 {% endif %}
