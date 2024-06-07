@@ -16,8 +16,7 @@
   pyzmq_23:
     module.run:
       - pip.install:
-        - pkg: 
-          - /tmp/{{pyzmq_wheel}}
+        - pkg: /tmp/{{pyzmq_wheel}}
         - bin_env: {{bin_env}}
         - force_reinstall: True
         - ignore_installed: True
