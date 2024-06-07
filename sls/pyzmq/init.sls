@@ -13,7 +13,7 @@
 
   pyzmq_23:
     pip.installed:
-      - name: /tmp/pyzmq-23.2.0.whl
+      - name: /tmp/{{pyzmq_wheel}}
       - force_reinstall: True
       - require:
         - file: wheel_cp
