@@ -5,8 +5,8 @@
 
   wheel_cp:
     file.managed:
-      - name: /tmp/pyzmq-23.2.0.whl
-      - source: salt://sls/pyzmq/pyzmq-23.2.0.whl
+      - name: /tmp/pyzmq-23_2_0.whl
+      - source: salt://sls/pyzmq/pyzmq-23_2_0.whl
       - replace: True
 
   # pyzmq_23:
