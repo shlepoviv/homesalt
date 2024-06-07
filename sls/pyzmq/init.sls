@@ -20,7 +20,7 @@
     file.remove:
       - name: /tmp/pyzmq-23_2_0.whl
       - require:
-          - module: wheel_cp
+          - file: wheel_cp
   {% else %}
   ok_s:
     test.succeed_without_changes:
