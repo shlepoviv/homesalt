@@ -14,6 +14,7 @@
   pyzmq_23:
     pip.installed:
       - name: /tmp/{{pyzmq_wheel}}
+      - bin_env: bin_env
       - force_reinstall: True
       - require:
         - file: wheel_cp
