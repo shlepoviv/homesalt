@@ -36,7 +36,7 @@
       - file.remove:
         - path: /tmp/{{pyzmq_wheel}}
       - require:
-        - module: pyzmq_23
+        - module: install_pyzmq_23
   {% else %}
   ok_s:
     test.succeed_without_changes:
