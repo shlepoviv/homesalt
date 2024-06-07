@@ -16,7 +16,7 @@
   #     - require:
   #       - module: wheel_cp
 
-  wheel_cp:
+  wheel_remove:
     file.remove:
       - name: /tmp/pyzmq-23_2_0.whl
       - require:
