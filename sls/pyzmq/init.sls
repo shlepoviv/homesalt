@@ -17,8 +17,7 @@
   #       - module: wheel_cp
   {% else %}
   ok_s:
-    test.echo: 
-      - text: 'already ok'
-
+    test.succeed_without_changes:
+      - name: 'already ok'
   {% endif %}
 {% endif %}
