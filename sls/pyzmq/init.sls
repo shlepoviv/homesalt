@@ -13,6 +13,14 @@
       - source: salt://sls/pyzmq/{{pyzmq_wheel}}
       - replace: True
 
+  unistall_pyzmq_25:
+    module.run:
+      - pip.uninstall:
+        - pkgs: pyzmq
+        - bin_env: {{bin_env}}
+        - require:
+          - file: wheel_cp
+
   pyzmq_23:
     module.run:
       - pip.install:
@@ -20,9 +28,8 @@
         - bin_env: {{bin_env}}
         - force_reinstall: True
         - ignore_installed: True
-        - use_wheel: True
         - require:
-          - file: wheel_cp
+          - module: unistall_pyzmq_25
 
   # wheel_remove:
   #   module.run:
