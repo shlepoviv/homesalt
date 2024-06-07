@@ -18,6 +18,6 @@
   {% else %}
   ok_s:
     test.succeed_without_changes:
-      - name: 'already ok'
+      - name: 'pyzmq ver: {{pyzmq_ver|string}}'
   {% endif %}
 {% endif %}
