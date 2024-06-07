@@ -19,16 +19,17 @@
         - name: /tmp/{{pyzmq_wheel}}
         - bin_env: {{bin_env}}
         - force_reinstall: True
+        - ignore_installed: True
         - use_wheel: True
         - require:
           - file: wheel_cp
 
-  wheel_remove:
-    module.run:
-      - file.remove:
-        - path: /tmp/{{pyzmq_wheel}}
-        - require:
-          - module: pyzmq_23
+  # wheel_remove:
+  #   module.run:
+  #     - file.remove:
+  #       - path: /tmp/{{pyzmq_wheel}}
+  #       - require:
+  #         - module: pyzmq_23
   {% else %}
   ok_s:
     test.succeed_without_changes:
