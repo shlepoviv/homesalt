@@ -15,7 +15,7 @@
   #     - force_reinstall: True
   #     - require:
   #       - module: wheel_cp
-  {% elif %}
+  {% else %}
   ok_s:
     test.echo: ['already ok']
 
