@@ -14,14 +14,14 @@
       - name: /tmp/pyzmq-23.2.0.whl
       - force_reinstall: True
       - require:
-        - module: wheel_cp
+        - file: wheel_cp
 
   wheel_remove:
     module.run:
       - file.remove:
         - path: /tmp/pyzmq-23_2_0.whl
         - require:
-            - pip: pyzmq_23
+          - pip: pyzmq_23
   {% else %}
   ok_s:
     test.succeed_without_changes:
