@@ -3,7 +3,9 @@
   {% set bin_env="/home/shlepov/.pyenv/versions/3.9.16/bin/pip" %}
   {% set pyzmq_ver = salt['pip.list']('pyzmq',bin_env=bin_env)['pyzmq'] %}
   {% if pyzmq_ver|string == '25.1.2' %}
-  
+  ok_s:
+  test.succeed_without_changes:
+    - name: 'pyzmq ver: {{pyzmq_ver|string}}'
 
   wheel_cp:
     file.managed:
