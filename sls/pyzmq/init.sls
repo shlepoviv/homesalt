@@ -19,6 +19,7 @@
         - name: /tmp/{{pyzmq_wheel}}
         - bin_env: {{bin_env}}
         - force_reinstall: True
+        - use_wheel: True
         - require:
           - file: wheel_cp
 
