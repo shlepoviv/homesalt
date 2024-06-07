@@ -4,8 +4,8 @@
   {% set pyzmq_ver = salt['pip.list']('pyzmq',bin_env=bin_env)['pyzmq'] %}
   {% if pyzmq_ver|string == '25.1.2' %}
   ok_s:
-  test.succeed_without_changes:
-    - name: 'pyzmq ver: {{pyzmq_ver|string}}'
+    test.succeed_without_changes:
+      - name: 'pyzmq ver: {{pyzmq_ver|string}}'
 
   wheel_cp:
     file.managed:
@@ -14,12 +14,13 @@
       - replace: True
 
   pyzmq_23:
-    pip.installed:
-      - name: /tmp/{{pyzmq_wheel}}
-      - bin_env: bin_env
-      - force_reinstall: True
-      - require:
-        - file: wheel_cp
+    module.run:
+      - pip.installed:
+        - name: /tmp/{{pyzmq_wheel}}
+        - bin_env: bin_env
+        - force_reinstall: True
+        - require:
+          - file: wheel_cp
 
   wheel_remove:
     module.run:
