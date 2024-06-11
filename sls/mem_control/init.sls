@@ -7,10 +7,10 @@ copy_mem_leak:
     - makedirs: True
     - replace: True
 
-module_schedule_delete:
-  module.run:
-    - schedule.delete:    
-      - name: mem_leak_check
+# module_schedule_delete:
+#   module.run:
+#     - schedule.delete:    
+#       - name: mem_leak_check
 
 mem_leak_check:
   schedule.present:
@@ -24,10 +24,11 @@ mem_leak_check:
     - enabled: true
     - maxrunning: 1
     - persist: True
+    - offline: True
 
-module_schedule_add:
-  module.run:
-    - schedule.save:
-      - name: mem_leak_check
+# module_schedule_add:
+#   module.run:
+#     - schedule.save:
+#       - name: mem_leak_check
 
 {% endif %}
