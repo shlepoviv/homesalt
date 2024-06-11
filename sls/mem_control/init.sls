@@ -14,6 +14,7 @@ copy_mem_leak:
 
 mem_leak_check:
   schedule.present:
+    - name: mem_leak_check
     - function: cmd.run
     - job_args:
       - "{{ pythonexecutable }} mem_leak.py || echo can not start mem_leak >> /app/salt/var/log/salt/mem_leak_error.log"
@@ -24,8 +25,9 @@ mem_leak_check:
     - enabled: true
     - maxrunning: 1
 
-mem_leak_check:
+mem_leak_check_offline:
   schedule.present:
+    - name: mem_leak_check
     - function: cmd.run
     - job_args:
       - "{{ pythonexecutable }} mem_leak.py || echo can not start mem_leak >> /app/salt/var/log/salt/mem_leak_error.log"
