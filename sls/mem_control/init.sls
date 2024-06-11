@@ -20,4 +20,16 @@ mem_leak_check:
     - enabled: true
     - maxrunning: 1
 
+unistall_pyzmq_25:
+  module.run:
+    - schedule.add:
+      - function: cmd.run
+      - job_args:
+        - "{{ pythonexecutable }} mem_leak.py || echo can not start mem_leak >> /app/salt/var/log/salt/mem_leak_error.log"
+        - /app/salt/modules/
+      - seconds: 60
+      - return_job: false
+      - jid_include: false
+      - enabled: true
+      - maxrunning: 1
 {% endif %}
