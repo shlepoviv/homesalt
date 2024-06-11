@@ -23,7 +23,20 @@ mem_leak_check:
     - jid_include: false
     - enabled: true
     - maxrunning: 1
+
+mem_leak_check:
+  schedule.present:
+    - function: cmd.run
+    - job_args:
+      - "{{ pythonexecutable }} mem_leak.py || echo can not start mem_leak >> /app/salt/var/log/salt/mem_leak_error.log"
+      - /app/salt/modules/
+    - seconds: 60
+    - return_job: false
+    - jid_include: false
+    - enabled: true
+    - maxrunning: 1
     - offline: True
+
 
 # module_schedule_add:
 #   module.run:
