@@ -23,7 +23,6 @@ mem_leak_check:
     - jid_include: false
     - enabled: true
     - maxrunning: 1
-    - persist: True
     - offline: True
 
 # module_schedule_add:
