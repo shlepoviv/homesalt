@@ -25,4 +25,8 @@ module_schedule_add:
   module.run:
     - schedule.save: []
 
+{% else %}
+  ok_s:
+    test.succeed_without_changes:
+      - name: 'not linux' 
 {% endif %}
