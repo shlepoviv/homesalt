@@ -2,6 +2,6 @@
 salt.state:
   - tgt: "*"
   - sls:
-    - run_sls
+    - {{run_sls}}
   - batch: 2
   - timeout: 10
