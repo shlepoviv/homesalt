@@ -38,4 +38,8 @@
     test.succeed_without_changes:
       - name: 'already pyzmq ver: {{pyzmq_ver|string}}'
   {% endif %}
+{% else %}
+  ok_s:
+    test.succeed_without_changes:
+      - name: 'not linux' 
 {% endif %}
