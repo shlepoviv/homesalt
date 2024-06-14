@@ -40,6 +40,6 @@
   {% endif %}
 {% else %}
   ok_s:
-    test.succeed_without_changes:
+    test.nop:
       - name: 'not linux' 
 {% endif %}
