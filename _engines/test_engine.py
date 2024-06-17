@@ -22,7 +22,7 @@ An engine that reads messages from the salt event bus.
 import logging
 import fnmatch
 
-
+from custom_logger import CustomLogger
 
 import salt.utils.event
 import salt.utils.json
@@ -77,11 +77,13 @@ def start(include_tags=None, exclude_tags=None):
     if not isinstance(exclude_tags, list):
         raise TypeError("exclude_tags is not a list")
     
+    logger = CustomLogger(__opts__)
     with event_bus_context(__opts__) as event_bus:
         while True:
             event = event_bus.get_event(full=True)
             if event and _match_tag(event["tag"], include_tags, exclude_tags):
-                log.debug(f"test engine geted event {event}")
+
+                logger.info(f"test engine geted event {event}")
                 # jevent = salt.utils.json.dumps(event)
                 __runners__["auditdb.write"](event["data"])
                 # with open('/home/shlepov/log_test_engine','a') as f:
