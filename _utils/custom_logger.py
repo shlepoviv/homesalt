@@ -17,7 +17,7 @@ class CustomLogger:
     def info(self,mess):
         self._check_opts()
         with open('/home/shlepov/testlog','a') as f:
-            f.write(f'last_check_opts: {self.last_check_opts}\tlog_level: {self.opts.get("custom_log_lvl")}\t{self.last_check_opts}\n')
+            f.write(f'last_check_opts: {self.last_check_opts}\tlog_level: {self.opts.get("custom_log_lvl")}\t{self._check_opts_interval}\n')
 
 
         
