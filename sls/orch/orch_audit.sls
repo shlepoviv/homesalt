@@ -4,4 +4,4 @@ run_audit:
     - sls:
       - sls.audit
     - batch: 2
-    - timeout: 10
+    - timeout: 20
