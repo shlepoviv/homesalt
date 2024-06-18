@@ -10,4 +10,4 @@ run_audit:
     - batch: 2
     - timeout: 20
     - require:
-      - runner: testrun
+      - test: testrun
