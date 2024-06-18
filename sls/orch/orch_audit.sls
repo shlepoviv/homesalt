@@ -1,3 +1,7 @@
+testrun:
+  salt.runner:
+    - name: test.stream
+
 run_audit:
   salt.state:
     - tgt: "*"
@@ -5,3 +9,5 @@ run_audit:
       - sls.audit
     - batch: 2
     - timeout: 20
+    - require:
+      - runner: testrun
