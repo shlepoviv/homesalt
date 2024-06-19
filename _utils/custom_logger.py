@@ -3,6 +3,8 @@ import salt.config
 import logging 
 
 log = logging.getLogger(__name__)
+with open('/home/shlepov/loglog','a') as f:
+    f.write(f'rewrite logger class{logging.getLoggerClass()}\n')
 class CustomLogger:
     def __init__(self, opts):
         
