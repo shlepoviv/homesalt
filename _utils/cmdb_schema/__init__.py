@@ -8,7 +8,7 @@ from sqlalchemy.orm import Session
 
 from inventory_schema import Host
 
-log = logging.getLogger(__name__)
+log = logging.getLogger('test_import')
 
 _DB_PARAM = 'postgresql+psycopg2://postgres:d34gj8h9qNn@192.168.1.13/cmdb'
 

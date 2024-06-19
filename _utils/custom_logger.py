@@ -2,7 +2,7 @@ import time
 import salt.config
 import logging 
 
-log = log = logging.getLogger(__name__)
+log = logging.getLogger(__name__)
 class CustomLogger:
     def __init__(self, opts):
         
