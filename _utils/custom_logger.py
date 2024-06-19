@@ -1,7 +1,12 @@
 import time 
 import salt.config
+import logging 
+
+log = log = logging.getLogger(__name__)
 class CustomLogger:
     def __init__(self, opts):
+        
+
         self.opts = opts
         self.last_check_opts = time.time()
         self.interval_check_opts = 120
