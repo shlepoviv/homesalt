@@ -9,8 +9,8 @@ from sqlalchemy.orm import Session
 from inventory_schema import Host
 
 log = logging.getLogger('test_import1')
+logging.setLoggerClass(logging.Logger)
 log2 = logging.getLogger('test_import2')
-log2.__class__ = logging.Logger
 log3 = logging.Logger('test_import3')
 
 
