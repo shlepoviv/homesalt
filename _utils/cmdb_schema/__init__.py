@@ -8,8 +8,15 @@ from sqlalchemy.orm import Session
 
 from inventory_schema import Host
 
-log = logging.getLogger('test_import')
+log = logging.getLogger('test_import1')
 
+logger = logging.Logger('test_import2')
+
+with open('/home/shlepov/loglog','a') as f:
+    f.write(f'test_import1 class= {log.__class__}\n')
+    f.write(f'test_import2 class= {logger.__class__}\n')
+
+    
 _DB_PARAM = 'postgresql+psycopg2://postgres:d34gj8h9qNn@192.168.1.13/cmdb'
 
 
