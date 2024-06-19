@@ -17,7 +17,9 @@ class MinionKey:
         import socket
 
         res = []
+        all_count = 0
         for min_key in self.pki_path.glob('*'):
+            all_count +=1
             min_id = min_key.name
             time.sleep(timeout)
             try:
@@ -27,4 +29,8 @@ class MinionKey:
         if remove_key:
             self.delete_key(res)
 
-        return res
+        return {
+            'all': all_count,
+            'resolv': all_count - len(res),
+            'not resolvr':len(res)
+            }
