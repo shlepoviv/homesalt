@@ -13,7 +13,7 @@ send_failure_event_test:
     - name: event.send
     - tag: result_test
     - data:
-        success: False
+        {{kwargs_audit}}
     - onfail:
       - salt: run_audit
 
@@ -22,7 +22,7 @@ send_success_event_test:
     - name: event.send
     - tag: result_test
     - data:
-        success: True
+        {{kwargs_audit}}
     - require:
       - salt: testrun
           
@@ -40,7 +40,7 @@ send_failure_event_run_audit:
     - name: event.send
     - tag: result_run_audit
     - data:
-        success: False
+        {{kwargs_audit}}
     - onfail:
       - salt: run_audit
 
@@ -49,6 +49,6 @@ send_success_event_run_audit:
     - name: event.send
     - tag: result_run_audit
     - data:
-        success: True
+        {{kwargs_audit}}
     - require:
       - salt: run_audit
