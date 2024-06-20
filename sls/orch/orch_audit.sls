@@ -1,3 +1,5 @@
+{% set kwargs_audit = {'batch' : 2, 'timeout': 20} %}
+
 testrun:
   salt.runner:
     - name: test.stream
@@ -23,13 +25,13 @@ send_success_event_test:
         success: True
     - require:
       - salt: testrun
+          
 run_audit:
   salt.state:
     - tgt: "*"
     - sls:
       - sls.audit
-    - batch: 2
-    - timeout: 20
+    - kwargs: {{kwargs_audit}}
     - require:
       - salt: testrun
 
