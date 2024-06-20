@@ -3,18 +3,26 @@ testrun:
     - name: test.stream
 
 testfail:
-  salt.function:
-    - name: file.copy
+  salt.runner:
+    - name: test.fail
 
-send_failure_event:
+send_failure_event_test:
   salt.runner:
     - name: event.send
-    - tag: failure/test
+    - tag: result_test
     - data:
-        fail: testfail
+        success: False
     - onfail:
-      - salt: testfail
+      - salt: run_audit
 
+send_success_event_test:
+  salt.runner:
+    - name: event.send
+    - tag: result_test
+    - data:
+        success: True
+    - require:
+      - salt: testrun
 run_audit:
   salt.state:
     - tgt: "*"
@@ -28,8 +36,17 @@ run_audit:
 send_failure_event_run_audit:
   salt.runner:
     - name: event.send
-    - tag: failure/run_audit
+    - tag: result_run_audit
     - data:
-        baz: qux
+        success: False
     - onfail:
+      - salt: run_audit
+
+send_success_event_run_audit:
+  salt.runner:
+    - name: event.send
+    - tag: result_run_audit
+    - data:
+        success: True
+    - require:
       - salt: run_audit
