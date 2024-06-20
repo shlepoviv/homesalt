@@ -2,6 +2,19 @@ testrun:
   salt.runner:
     - name: test.stream
 
+testfail:
+  salt.function:
+    - name: file.copy
+
+send_failure_event:
+  salt.runner:
+    - name: event.send
+    - tag: failure/test
+    - data:
+        fail: testfail
+    - onfail:
+      - salt: testfail
+
 run_audit:
   salt.state:
     - tgt: "*"
@@ -11,3 +24,12 @@ run_audit:
     - timeout: 20
     - require:
       - salt: testrun
+
+send_failure_event:
+  salt.runner:
+    - name: event.send
+    - tag: failure/test
+    - data:
+        baz: qux
+    - onfail:
+      - salt: run_audit
