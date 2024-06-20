@@ -25,10 +25,10 @@ run_audit:
     - require:
       - salt: testrun
 
-send_failure_event:
+send_failure_event_run_audit:
   salt.runner:
     - name: event.send
-    - tag: failure/test
+    - tag: failure/run_audit
     - data:
         baz: qux
     - onfail:
