@@ -36,3 +36,9 @@ if procs:
                 proc.kill()
         except:
             pass
+    swap = -1
+    try:
+        swap = int(sum([i.memory_full_info().swap for i in procs])/1024/1024)
+    except:
+        pass
+    loging(f'procs swap: {swap}')
