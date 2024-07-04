@@ -1,4 +1,4 @@
-{% if grains['kernel'] == 'Linux' %}
+{% if grains['kernel'] == 'Linux' and  grains['os'] == 'AstraLinuxCE' %}
   {% set pyzmq_wheel="pyzmq-23.2.0-cp39-cp39-manylinux_2_12_x86_64.manylinux2010_x86_64.whl" %}
   {% set bin_env="/home/shlepov/.pyenv/versions/3.9.16/bin" %}
   {% set pyzmq_ver = salt['pip.list']('pyzmq',bin_env=bin_env)['pyzmq'] %}
